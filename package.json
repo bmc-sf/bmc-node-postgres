@@ -1,5 +1,5 @@
 {
-  "name": "bmc-postgres",
+  "name": "bmc-node-postgres",
   "version": "1.0.0",
   "main": "app.js",
   "dependencies": {

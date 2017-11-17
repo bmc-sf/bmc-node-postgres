@@ -4,9 +4,7 @@
 //			run 'node app.js'
 //			Console will print message
 //			Open URL in Browser to see message
-//  Version:  server.js REL2 Heroku Connect DB Schema
-//  NOTE:  Admin function SQL statements not updated for Heroku Connect, only main functions updated
-//  Edit:  11/17/17 4:15pm
+//  Version:  server.js v1-master
 
 //Imports
 var express = require("express");
@@ -60,7 +58,7 @@ app.get('/', function (req, res){
 
 // GET request runs SELECT * query
 app.get('/students', function(request, response) {
-	client.query("SELECT First_name__c, Last_Name__c, email__c, Institution__c, Course__c, Instructor__c, Subscription_Type__c, Subscription_Level__c FROM salesforce.student__c", function (err, result, fields) {
+	client.query("SELECT firstname, lastname, email, institution, course, instructor, subscription_type, subscription_level FROM students", function (err, result, fields) {
 		if (err) throw err;
         console.log("Results:");
  		console.log(result);
@@ -73,7 +71,7 @@ app.get('/students', function(request, response) {
 // GET request runs SELECT * query
 app.get('/harry', function(request, response) {
 //	client.query("SELECT * FROM students WHERE lastname = 'Potter'", function (err, result, fields) {
-    client.query("SELECT First_name__c, Last_Name__c, email__c, Institution__c, Course__c, Instructor__c, Subscription_Type__c, Subscription_Level__c FROM salesforce.student__c  WHERE Last_Name__c = 'Potter'", function (err, result, fields) {
+    client.query("SELECT firstname, lastname, email, institution, course, instructor, subscription_type, subscription_level FROM students WHERE lastname = 'Potter'", function (err, result, fields) {
 		if (err) throw err;
         console.log("Results:");
  		console.log(result);
@@ -85,7 +83,7 @@ app.get('/harry', function(request, response) {
 
 // GET request runs INSERT query
 app.get('/insert', function(request, response) {
-	  var sql = "INSERT INTO salesforce.student__c (First_name__c, Last_Name__c, email__c, Institution__c, Course__c, Instructor__c, Subscription_Type__c, Subscription_Level__c) VALUES ('Mace', 'Windu', 'mwindu@ral.com', 'Rebel Alliance University', 'Rebellion History Insights', 'Yoda','','')";
+	  var sql = "INSERT INTO students (firstname, lastname, email, institution, course, instructor, subscription_type, subscription_level, created_on) VALUES ('Mace', 'Windu', 'mwindu@ral.com', 'Rebel Alliance University', 'Rebellion History Insights', 'Yoda','','', current_timestamp)";
 	  client.query(sql, function (err, result) {
 		if (err) throw err;
 		console.log("1 record inserted");
@@ -97,7 +95,7 @@ app.get('/insert', function(request, response) {
 app.get('/update', function(request, response) {
 	  var value1 = '2';
 	  var value2 = '3';
-	  var sql = "UPDATE salesforce.student__c SET Subscription_Type__c = 'Paid', Subscription_Level__c = 'Best' WHERE Last_Name__c = 'Granger'";
+	  var sql = "UPDATE students SET subscription_type = 'Paid', subscription_level = 'Best' WHERE lastname = 'Granger'";
 	  client.query(sql, function (err, result) {
 		if (err) throw err;
 		console.log("1 record inserted");
@@ -110,7 +108,7 @@ app.get('/update', function(request, response) {
 app.get('/update2', function(request, response) {
     var value1 = '2';
     var value2 = '3';
-    var sql = "UPDATE salesforce.student__c SET Subscription_Type__c = 'Free', Subscription_Level__c = 'Good' WHERE Last_Name__c = 'Granger'";
+    var sql = "UPDATE students SET subscription_type = 'Free', subscription_level = 'Good' WHERE lastname = 'Granger'";
     client.query(sql, function (err, result) {
       if (err) throw err;
       console.log("1 record inserted");
@@ -121,7 +119,7 @@ app.get('/update2', function(request, response) {
 
 // GET request runs DELETE query
 app.get('/delete', function(request, response) {
-    var sql = "DELETE FROM salesforce.student__c WHERE Last_Name__c like '%Windu%'";
+    var sql = "DELETE FROM students WHERE lastname like '%Windu%'";
      client.query(sql, function (err, result) {
 		if (err) throw err;
 		console.log("1 record inserted");
@@ -131,8 +129,6 @@ app.get('/delete', function(request, response) {
 });
 
 // Handle POST with JSON
-
-// Inactice, Trial, Good, Better, Best  subscription_status__c
 app.post('/json', function(request, response) {
     var jsonData = request.body;
 
@@ -146,7 +142,7 @@ app.post('/json', function(request, response) {
     console.log('JSON = ' + tmp);
 
     // Update Student
-    var sql = "UPDATE salesforce.student__c SET Subscription_Type__c = '"+jObj.subscription_type+"', Subscription_Level__c = '"+jObj.subscription_level+"' WHERE Last_Name__c = '"+jObj.lastname+"'";
+    var sql = "UPDATE students SET subscription_type = '"+jObj.subscription_type+"', subscription_level = '"+jObj.subscription_level+"' WHERE lastname = '"+jObj.lastname+"'";
     console.log(sql);
     client.query(sql, function (err, result) {
       if (err) throw err;
